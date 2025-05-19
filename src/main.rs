@@ -1,12 +1,10 @@
 use std::io;
 use std::io::Write;
 
-fn get_user_input(current_window: String) {
+fn get_user_input(current_window: &str) -> String {
     let current_window = current_window.trim();
     let current_window = current_window.to_string(); 
     
-    let is_window = current_window == "Main" || current_window == "Other";
-
     print!("POS: ");
     io::stdout().flush().expect("Could not flush output buffer.");
 
@@ -14,26 +12,59 @@ fn get_user_input(current_window: String) {
     io::stdin().read_line(&mut input).expect("Could not read line.");
     let input = input.trim();
     let input = input.to_string();
+    let is_window = input == String::from("Other") || input == String::from("Main");
+    let input_clone = input.clone();
     
-    if input != "current_window" && is_window == true {
+    if is_window == false || input == current_window {
+        println!("Returning input clone");
+        return input_clone;
+    } 
         change_window(input);
-    }
-
-    else {
-        change_window(current_window);
-    }
+        return String::from("changed_window");
 }
 
 fn w_main() { 
-    let current_window = String::from("Main");
+    let current_window = "Main";
     println!("At Main:");
-    get_user_input(current_window);
+
+    loop {
+    let input = get_user_input(current_window);
+println!("Debug: input received -> '{}'", input.trim());
+        if input.trim() == "li" {
+            println!("test");
+        }
+
+        else if input.trim() == "clear" {
+            print!("\x1B[2J\x1B[1;1H");
+        }
+
+        else {
+            println!("Invalid input");
+            w_main();
+        } 
+    }
 }
 
 fn w_other() {
-    let current_window = String::from("Other");
+    let current_window = "Other";
     println!("At Other:");
-    get_user_input(current_window);
+
+    loop {
+    let input = get_user_input(current_window);
+println!("Debug: input received -> '{}'", input.trim());
+        if input.trim() == "li" {
+            println!("test");
+        }
+
+        else if input.trim() == "clear" {
+            print!("\x1B[2J\x1B[1;1H");
+        }
+
+        else {
+            println!("Invalid input");
+            w_other();
+        }
+    }
 }
 
 fn change_window(window: String) {
@@ -44,6 +75,10 @@ fn change_window(window: String) {
 
    else if window.trim() == "Main" {
        w_main();
+   }
+   
+   else {
+       return;
    }
 }
 
